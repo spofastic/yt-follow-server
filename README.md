@@ -10,6 +10,17 @@ teilen sich **eine** Abo-Liste. Datenhaltung: eine JSON-Datei im Docker-Volume.
 - Eine zentrale Abo-Liste für alle Geräte, statt „pro Browser getrennt".
 - Das Pollen passiert einmal zentral statt auf jedem Client.
 
+## Projektstruktur
+- **Repo-Wurzel** – der Server (Node/Express), Docker-Setup, PWA unter `public/`.
+- **[`extension/`](extension/)** – die Vivaldi/Chromium-Extension (Desktop-Client).
+  Sie schreibt über den „Folgen"-Button in dieselbe zentrale Liste. Eigene
+  Installations-/Einrichtungsanleitung in [`extension/README.md`](extension/README.md).
+
+So befüllst du die eine gemeinsame Liste:
+- **Windows/Desktop:** Vivaldi-Extension (`extension/`) – Button auf Kanalseiten
+- **iOS:** Apple-Kurzbefehl → Teilen-Menü → `POST /api/channels`
+- **Überall:** die PWA (`http://<server>:<port>`)
+
 ## Zwei Wege zur Installation
 - **Lokal bauen** (zum Entwickeln/Testen): `docker-compose.yml` – baut das Image
   direkt aus dem Quellcode. Siehe unten.

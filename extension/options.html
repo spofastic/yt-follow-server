@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="options.css" />
+    <title>YouTube Follow – Einstellungen</title>
+  </head>
+  <body>
+    <h1>YouTube Follow – Einstellungen</h1>
+    <p class="hint">
+      Adresse deines yt-follow-Servers eintragen. Der „Folgen"-Button und das
+      Popup schreiben dann in diese zentrale Liste (gemeinsam mit PWA und iOS).
+    </p>
+
+    <label for="url">Server-URL</label>
+    <input
+      id="url"
+      type="text"
+      placeholder="http://10.10.10.100:8080"
+      autocapitalize="off"
+      autocorrect="off"
+      spellcheck="false"
+    />
+
+    <button id="save">Speichern &amp; testen</button>
+    <p id="status" class="status"></p>
+
+    <script src="options.js"></script>
+  </body>
+</html>

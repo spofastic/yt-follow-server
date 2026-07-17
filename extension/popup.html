@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Meine YouTube-Abos</h1>
+      <div class="actions">
+        <button id="refresh" title="Feeds aktualisieren">Aktualisieren</button>
+        <button id="markAll" title="Alle als gesehen markieren">Alle gelesen</button>
+        <button id="settings" title="Einstellungen">⚙</button>
+      </div>
+    </header>
+
+    <div id="notice" class="notice" hidden></div>
+
+    <div class="add">
+      <input id="addInput" type="text" placeholder="Kanal-URL, @handle oder UC…-ID" />
+      <button id="addBtn">Hinzufügen</button>
+    </div>
+
+    <p id="status" class="status"></p>
+
+    <section id="channels" class="channels"></section>
+    <section id="videos" class="videos"></section>
+
+    <footer><span id="meta"></span></footer>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
