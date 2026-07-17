@@ -17,24 +17,36 @@
     <header>
       <h1>Meine YouTube-Abos</h1>
       <div class="actions">
-        <button id="refresh">Aktualisieren</button>
-        <button id="markAll">Alle gelesen</button>
+        <button id="markAll" class="icon" title="Alle als gesehen markieren" aria-label="Alle gelesen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+        </button>
+        <button id="refresh" class="icon" title="Feeds aktualisieren" aria-label="Aktualisieren">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6" /><path d="M21.34 15.57a10 10 0 1 1-.57-8.38" /></svg>
+        </button>
+        <button id="addBtn" class="icon" title="Kanal hinzufügen" aria-label="Hinzufügen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>
+        </button>
+        <button id="manageBtn" class="icon" title="Kanäle verwalten" aria-label="Verwalten">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
+        </button>
       </div>
     </header>
 
-    <div class="add">
-      <input id="addInput" type="text" placeholder="Kanal-URL, @handle oder UC…-ID" />
-      <button id="addBtn">Hinzufügen</button>
-    </div>
+    <dialog id="addDialog">
+      <div class="dialog-body">
+        <label for="addInput">Kanal hinzufügen</label>
+        <input id="addInput" type="text" placeholder="Kanal-URL, @handle oder UC…-ID" autocomplete="off" autocapitalize="off" spellcheck="false" />
+        <p id="addStatus" class="dialog-status"></p>
+        <div class="dialog-actions">
+          <button id="addCancel" class="ghost">Abbrechen</button>
+          <button id="addConfirm">Hinzufügen</button>
+        </div>
+      </div>
+    </dialog>
 
     <p id="status" class="status"></p>
 
-    <section class="channelbar">
-      <div id="channels" class="channels"></div>
-      <button id="manageBtn" class="manage-toggle" title="Kanäle verwalten" hidden>
-        Verwalten
-      </button>
-    </section>
+    <section id="channels" class="channels"></section>
 
     <section id="manage" class="manage" hidden>
       <div class="manage-head">

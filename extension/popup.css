@@ -37,7 +37,7 @@ header {
   margin-bottom: 8px;
 }
 h1 { font-size: 15px; margin: 0; }
-.actions { display: flex; gap: 6px; }
+.actions { display: flex; gap: 4px; }
 
 button {
   cursor: pointer;
@@ -49,6 +49,47 @@ button {
   font-size: 12px;
 }
 button:hover { border-color: var(--accent); }
+
+button.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+}
+button.icon svg { width: 17px; height: 17px; display: block; }
+
+/* Dialog "Kanal hinzufügen" */
+dialog {
+  border: none;
+  border-radius: 10px;
+  padding: 0;
+  color: var(--fg);
+  background: var(--bg);
+  width: 320px;
+  max-width: 92vw;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
+.dialog-body { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.dialog-body label { font-weight: 600; }
+.dialog-body input {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 13px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--fg);
+  box-sizing: border-box;
+}
+.dialog-body input:focus { outline: none; border-color: var(--accent); }
+.dialog-status { color: var(--muted); font-size: 12px; min-height: 16px; margin: 0; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 6px; }
+button.ghost { background: transparent; }
+#addConfirm { background: var(--accent); color: #fff; border-color: var(--accent); }
+#addConfirm:hover { background: #a30000; }
 
 .notice {
   background: #fff4e5;
@@ -84,8 +125,7 @@ button:hover { border-color: var(--accent); }
 
 .status { color: var(--muted); font-size: 12px; margin: 4px 0; min-height: 16px; }
 
-.channelbar { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 10px; }
-.channels { flex: 1; display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.channels { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 .chip {
   display: inline-flex;
   align-items: center;

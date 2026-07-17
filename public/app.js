@@ -34,7 +34,6 @@ function escapeHtml(s) {
 function paintChannels() {
   const box = $("#channels");
   box.innerHTML = "";
-  $("#manageBtn").hidden = state.channels.length === 0;
 
   if (!state.channels.length) {
     box.innerHTML =
@@ -145,27 +144,41 @@ async function load() {
   paint();
 }
 
+const addDialog = $("#addDialog");
+
+function openAddDialog() {
+  $("#addInput").value = "";
+  $("#addStatus").textContent = "";
+  addDialog.showModal();
+  $("#addInput").focus();
+}
+
 async function addChannel() {
-  const inp = $("#addInput");
-  const value = inp.value.trim();
+  const value = $("#addInput").value.trim();
   if (!value) return;
-  $("#status").textContent = "Suche Kanal…";
+  $("#addStatus").textContent = "Suche Kanal…";
   const res = await api("/api/channels", {
     method: "POST",
     body: JSON.stringify({ value }),
   });
   if (res && res.ok) {
-    inp.value = "";
+    addDialog.close();
     $("#status").textContent = `„${res.channel.name}" hinzugefügt.`;
     await load();
   } else {
-    $("#status").textContent = (res && res.error) || "Kanal nicht gefunden.";
+    $("#addStatus").textContent = (res && res.error) || "Kanal nicht gefunden.";
   }
 }
 
-$("#addBtn").onclick = addChannel;
+$("#addBtn").onclick = openAddDialog;
+$("#addConfirm").onclick = addChannel;
+$("#addCancel").onclick = () => addDialog.close();
 $("#addInput").addEventListener("keydown", (e) => {
   if (e.key === "Enter") addChannel();
+});
+// Klick auf den Backdrop schliesst den Dialog
+addDialog.addEventListener("click", (e) => {
+  if (e.target === addDialog) addDialog.close();
 });
 
 $("#manageBtn").onclick = () => {

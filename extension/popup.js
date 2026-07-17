@@ -37,7 +37,6 @@ function showNotice(html) {
 function paintChannels() {
   const box = $("#channels");
   box.innerHTML = "";
-  $("#manageBtn").hidden = state.channels.length === 0;
 
   if (!state.channels.length) {
     box.innerHTML =
@@ -153,7 +152,6 @@ async function load() {
     $("#videos").innerHTML = "";
     $("#manageList").innerHTML = "";
     $("#manage").hidden = true;
-    $("#manageBtn").hidden = true;
     $("#meta").textContent = "";
     if (res && res.error === "no-server") {
       showNotice('Kein Server eingerichtet. <button>Einstellungen öffnen</button>');
@@ -175,26 +173,39 @@ async function load() {
   paint();
 }
 
+const addDialog = $("#addDialog");
+
+function openAddDialog() {
+  $("#addInput").value = "";
+  $("#addStatus").textContent = "";
+  addDialog.showModal();
+  $("#addInput").focus();
+}
+
 async function addChannel() {
-  const inp = $("#addInput");
-  const value = inp.value.trim();
+  const value = $("#addInput").value.trim();
   if (!value) return;
-  $("#status").textContent = "Suche Kanal…";
+  $("#addStatus").textContent = "Suche Kanal…";
   const res = await send({ type: "follow", value });
   if (res && res.ok) {
-    inp.value = "";
+    addDialog.close();
     $("#status").textContent = res.channel ? `„${res.channel.name}" hinzugefügt.` : "Hinzugefügt.";
     await load();
   } else if (res && res.error === "no-server") {
-    $("#status").textContent = "Bitte zuerst den Server einrichten.";
+    $("#addStatus").textContent = "Bitte zuerst den Server einrichten (Einstellungen).";
   } else {
-    $("#status").textContent = (res && res.error) || "Kanal nicht gefunden.";
+    $("#addStatus").textContent = (res && res.error) || "Kanal nicht gefunden.";
   }
 }
 
-$("#addBtn").onclick = addChannel;
+$("#addBtn").onclick = openAddDialog;
+$("#addConfirm").onclick = addChannel;
+$("#addCancel").onclick = () => addDialog.close();
 $("#addInput").addEventListener("keydown", (e) => {
   if (e.key === "Enter") addChannel();
+});
+addDialog.addEventListener("click", (e) => {
+  if (e.target === addDialog) addDialog.close();
 });
 
 $("#manageBtn").onclick = () => {
