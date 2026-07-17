@@ -15,6 +15,7 @@ teilen sich **eine** Abo-Liste. Datenhaltung: eine JSON-Datei im Docker-Volume.
 - **[`extension/`](extension/)** – die Vivaldi/Chromium-Extension (Desktop-Client).
   Sie schreibt über den „Folgen"-Button in dieselbe zentrale Liste. Eigene
   Installations-/Einrichtungsanleitung in [`extension/README.md`](extension/README.md).
+- **[`docs/`](docs/)** – Konzepte, u. a. [Mehrbenutzerfähigkeit](docs/MULTIUSER.md).
 
 So befüllst du die eine gemeinsame Liste:
 - **Windows/Desktop:** Vivaldi-Extension (`extension/`) – Button auf Kanalseiten
