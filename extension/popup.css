@@ -83,35 +83,8 @@ button.icon svg { width: 17px; height: 17px; display: block; }
 @keyframes spin { to { transform: rotate(360deg); } }
 button.icon.spinning svg { animation: spin 0.8s linear infinite; }
 
-/* Dialog "Kanal hinzufügen" */
-dialog {
-  border: none;
-  border-radius: 10px;
-  padding: 0;
-  color: var(--fg);
-  background: var(--bg);
-  width: 320px;
-  max-width: 92vw;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-}
-dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
-.dialog-body { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
-.dialog-body label { font-weight: 600; }
-.dialog-body input {
-  width: 100%;
-  padding: 8px 10px;
-  font-size: 13px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--bg);
-  color: var(--fg);
-  box-sizing: border-box;
-}
-.dialog-body input:focus { outline: none; border-color: var(--accent); }
-.dialog-status { color: var(--muted); font-size: 12px; min-height: 16px; margin: 0; }
-.dialog-actions { display: flex; justify-content: flex-end; gap: 6px; }
 button.ghost { background: transparent; }
-#addConfirm { background: var(--accent); color: #fff; border-color: var(--accent); }
+#addConfirm { background: var(--accent); color: #fff; border-color: var(--accent); white-space: nowrap; }
 #addConfirm:hover { background: #a30000; }
 
 .notice {
@@ -148,7 +121,20 @@ button.ghost { background: transparent; }
 
 .status { color: var(--muted); font-size: 12px; margin: 4px 0; min-height: 16px; }
 
-.channels { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+/* Filter-Leiste: eine Zeile, horizontal scrollbar statt umbrechend */
+.channels {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin-bottom: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.channels::-webkit-scrollbar { display: none; }
+.channels .chip { flex: 0 0 auto; }
+.channels .empty { padding: 8px 0; white-space: normal; }
 .chip {
   display: inline-flex;
   align-items: center;
@@ -158,6 +144,7 @@ button.ghost { background: transparent; }
   padding: 3px 10px;
   font-size: 12px;
   color: inherit;
+  white-space: nowrap;
 }
 .chip.filter { cursor: pointer; }
 .chip.filter:hover { border-color: var(--accent); }
@@ -171,6 +158,27 @@ button.ghost { background: transparent; }
   margin-bottom: 10px;
 }
 .manage-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.manage-add { display: flex; gap: 6px; }
+.manage-add input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 9px;
+  font-size: 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--fg);
+}
+.manage-add input:focus { outline: none; border-color: var(--accent); }
+.field-status { color: var(--muted); font-size: 12px; min-height: 16px; margin: 5px 0 6px; }
+.manage-backup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
 .manage-list { display: flex; flex-direction: column; gap: 5px; }
 .manage-row {
   display: flex;

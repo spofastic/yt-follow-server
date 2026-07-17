@@ -97,6 +97,24 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
           break;
         }
 
+        case "export": {
+          const res = await apiFetch("/api/export");
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          sendResponse({ ok: true, data: await res.json() });
+          break;
+        }
+
+        case "import": {
+          const res = await apiFetch("/api/import", {
+            method: "POST",
+            ...jsonBody({ channels: msg.channels || [] }),
+          });
+          const data = await res.json().catch(() => ({}));
+          updateBadge();
+          sendResponse({ ok: res.ok, added: data.added, total: data.total });
+          break;
+        }
+
         case "refresh": {
           const res = await apiFetch("/api/refresh", { method: "POST" });
           const data = await res.json().catch(() => ({}));

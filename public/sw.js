@@ -1,7 +1,7 @@
 // Minimaler Service Worker: macht die App installierbar (PWA) und cached die Shell.
 // API-Aufrufe laufen bewusst ohne Cache, damit die Video-Liste immer aktuell ist.
 
-const CACHE = "ytf-shell-v4";
+const CACHE = "ytf-shell-v5";
 const SHELL = ["./", "index.html", "style.css", "app.js", "icon.svg", "manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {

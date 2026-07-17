@@ -153,15 +153,6 @@ async function load() {
   paint();
 }
 
-const addDialog = $("#addDialog");
-
-function openAddDialog() {
-  $("#addInput").value = "";
-  $("#addStatus").textContent = "";
-  addDialog.showModal();
-  $("#addInput").focus();
-}
-
 async function addChannel() {
   const value = $("#addInput").value.trim();
   if (!value) return;
@@ -171,31 +162,61 @@ async function addChannel() {
     body: JSON.stringify({ value }),
   });
   if (res && res.ok) {
-    addDialog.close();
-    $("#status").textContent = `„${res.channel.name}" hinzugefügt.`;
+    $("#addInput").value = "";
+    $("#addStatus").textContent = `„${res.channel.name}" hinzugefügt.`;
     await load();
   } else {
     $("#addStatus").textContent = (res && res.error) || "Kanal nicht gefunden.";
   }
 }
 
-$("#addBtn").onclick = openAddDialog;
 $("#addConfirm").onclick = addChannel;
-$("#addCancel").onclick = () => addDialog.close();
 $("#addInput").addEventListener("keydown", (e) => {
   if (e.key === "Enter") addChannel();
-});
-// Klick auf den Backdrop schliesst den Dialog
-addDialog.addEventListener("click", (e) => {
-  if (e.target === addDialog) addDialog.close();
 });
 
 $("#manageBtn").onclick = () => {
   const m = $("#manage");
   m.hidden = !m.hidden;
+  if (!m.hidden) {
+    $("#addStatus").textContent = "";
+    $("#addInput").focus();
+  }
 };
 $("#manageClose").onclick = () => {
   $("#manage").hidden = true;
+};
+
+// --- Backup: Kanalliste herunterladen / einspielen ---
+$("#exportBtn").onclick = () => {
+  const a = document.createElement("a");
+  a.href = "/api/export";
+  a.download = "yt-follow-backup.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+};
+
+$("#importBtn").onclick = () => $("#importFile").click();
+$("#importFile").onchange = async (e) => {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = ""; // erneutes Auswaehlen derselben Datei erlauben
+  if (!file) return;
+  $("#addStatus").textContent = "Backup wird eingespielt…";
+  try {
+    const data = JSON.parse(await file.text());
+    const channels = Array.isArray(data) ? data : data.channels;
+    if (!Array.isArray(channels)) throw new Error("Ungültiges Backup-Format.");
+    const res = await api("/api/import", {
+      method: "POST",
+      body: JSON.stringify({ channels }),
+    });
+    $("#addStatus").textContent =
+      res && res.ok ? `${res.added} Kanäle ergänzt (gesamt ${res.total}).` : "Import fehlgeschlagen.";
+    await load();
+  } catch (err) {
+    $("#addStatus").textContent = "Datei konnte nicht gelesen werden.";
+  }
 };
 
 $("#refresh").onclick = async () => {

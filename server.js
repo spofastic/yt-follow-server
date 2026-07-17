@@ -181,6 +181,37 @@ app.delete("/api/channels/:id", (req, res) => {
   res.json({ ok: true });
 });
 
+// Backup: aktuelle Kanalliste als JSON zum Download.
+app.get("/api/export", (_req, res) => {
+  const backup = {
+    type: "yt-follow-backup",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    channels: db.channels.map((c) => ({ id: c.id, name: c.name })),
+  };
+  res.setHeader("Content-Disposition", 'attachment; filename="yt-follow-backup.json"');
+  res.json(backup);
+});
+
+// Backup einspielen: fehlende Kanaele ergaenzen (bestehende bleiben erhalten).
+app.post("/api/import", async (req, res) => {
+  const incoming = Array.isArray(req.body?.channels) ? req.body.channels : [];
+  let added = 0;
+  for (const c of incoming) {
+    const id = typeof c === "string" ? c : c?.id;
+    if (!/^UC[\w-]{20,}$/.test(id || "")) continue;
+    if (db.channels.some((x) => x.id === id)) continue;
+    const name = (typeof c === "object" && c?.name) || id;
+    db.channels.push({ id, name, addedAt: Date.now() });
+    added++;
+  }
+  if (added) {
+    saveDb();
+    await pollAll();
+  }
+  res.json({ ok: true, added, total: db.channels.length });
+});
+
 app.post("/api/refresh", async (_req, res) => {
   const newCount = await pollAll();
   res.json({ ok: true, newCount });
