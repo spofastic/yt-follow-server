@@ -1,0 +1,27 @@
+# Portainer-Stack fuer die Synology NAS.
+# Nutzt das fertig gebaute Image aus der GitHub Container Registry (GHCR).
+# Image gehoert zum GitHub-Account "spofastic".
+
+services:
+  yt-follow:
+    image: ghcr.io/spofastic/yt-follow-server:latest
+    container_name: yt-follow
+    ports:
+      - "8080:8080"
+    volumes:
+      - yt-follow-data:/app/data
+      # Alternative (Synology-Bind-Mount statt benanntem Volume) – Ordner muss existieren:
+      # - /volume1/docker/yt-follow/data:/app/data
+    environment:
+      - PORT=8080
+      - POLL_MINUTES=30
+      - TZ=Europe/Berlin
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/api/state"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  yt-follow-data:

@@ -1,0 +1,12 @@
+services:
+  yt-follow:
+    build: .
+    container_name: yt-follow
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PORT=8080
+      - POLL_MINUTES=30
+    restart: unless-stopped

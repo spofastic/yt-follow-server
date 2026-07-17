@@ -1,0 +1,16 @@
+{
+  "name": "yt-follow-server",
+  "version": "1.0.0",
+  "description": "Kontofreier YouTube-Abo-Server: pollt oeffentliche RSS-Feeds und liefert eine PWA (iOS/Desktop/Android).",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

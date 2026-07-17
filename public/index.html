@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#cc0000" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="YT Follow" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icon.svg" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <link rel="stylesheet" href="style.css" />
+    <title>YouTube Follow</title>
+  </head>
+  <body>
+    <header>
+      <h1>Meine YouTube-Abos</h1>
+      <div class="actions">
+        <button id="refresh">Aktualisieren</button>
+        <button id="markAll">Alle gelesen</button>
+      </div>
+    </header>
+
+    <div class="add">
+      <input id="addInput" type="text" placeholder="Kanal-URL, @handle oder UC…-ID" />
+      <button id="addBtn">Hinzufügen</button>
+    </div>
+
+    <p id="status" class="status"></p>
+
+    <section id="channels" class="channels"></section>
+    <section id="videos" class="videos"></section>
+
+    <footer><span id="meta"></span></footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
