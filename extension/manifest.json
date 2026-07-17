@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YouTube Follow (Server-Client)",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Folgt YouTube-Kanaelen per Klick und traegt sie in deinen zentralen yt-follow-Server ein (gemeinsame Liste mit PWA und iOS-Kurzbefehl).",
   "permissions": ["storage", "alarms"],
   "host_permissions": ["https://www.youtube.com/*"],

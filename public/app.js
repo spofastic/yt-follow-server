@@ -30,37 +30,39 @@ function escapeHtml(s) {
   );
 }
 
-// --- Kanal-Chips: dienen als FILTER (nicht zum Loeschen) ---
+// --- Kanal-Filter als Dropdown (eine Zeile, alle Kanaele erreichbar) ---
 function paintChannels() {
   const box = $("#channels");
   box.innerHTML = "";
 
   if (!state.channels.length) {
     box.innerHTML =
-      '<p class="empty">Noch keine Kanäle. Oben eine Kanal-URL oder einen @handle eintragen.</p>';
+      '<p class="empty">Noch keine Kanäle. Über das Zahnrad einen Kanal hinzufügen.</p>';
     return;
   }
 
-  const allChip = document.createElement("button");
-  allChip.className = "chip filter" + (filter === null ? " active" : "");
-  allChip.textContent = "Alle";
-  allChip.onclick = () => {
-    filter = null;
-    paint();
-  };
-  box.appendChild(allChip);
+  const sel = document.createElement("select");
+  sel.className = "filter-select";
+  sel.setAttribute("aria-label", "Kanal filtern");
+
+  const optAll = document.createElement("option");
+  optAll.value = "";
+  optAll.textContent = "Alle Kanäle";
+  sel.appendChild(optAll);
 
   for (const c of state.channels) {
-    const chip = document.createElement("button");
-    chip.className = "chip filter" + (filter === c.id ? " active" : "");
-    chip.textContent = c.name;
-    chip.title = "Nur diesen Kanal anzeigen";
-    chip.onclick = () => {
-      filter = filter === c.id ? null : c.id;
-      paint();
-    };
-    box.appendChild(chip);
+    const o = document.createElement("option");
+    o.value = c.id;
+    o.textContent = c.name;
+    sel.appendChild(o);
   }
+
+  sel.value = filter || "";
+  sel.onchange = () => {
+    filter = sel.value || null;
+    paint();
+  };
+  box.appendChild(sel);
 }
 
 // --- Verwalten-Panel: Liste mit Muelleimer zum Loeschen ---
@@ -129,7 +131,7 @@ function updateUnseen() {
   const badge = $("#unseenBadge");
   badge.textContent = n > 99 ? "99+" : String(n);
   badge.hidden = n === 0;
-  document.title = n > 0 ? `(${n}) YouTube Follow` : "YouTube Follow";
+  document.title = n > 0 ? `(${n}) u2be w/o ggl` : "u2be w/o ggl";
 }
 
 function paint() {

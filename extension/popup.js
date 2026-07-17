@@ -40,30 +40,32 @@ function paintChannels() {
 
   if (!state.channels.length) {
     box.innerHTML =
-      '<p class="empty">Noch keine Kanäle. Auf einer YouTube-Kanalseite den „Folgen"-Button nutzen oder oben eintragen.</p>';
+      '<p class="empty">Noch keine Kanäle. Auf einer YouTube-Kanalseite den „Folgen"-Button nutzen oder über das Zahnrad hinzufügen.</p>';
     return;
   }
 
-  const allChip = document.createElement("button");
-  allChip.className = "chip filter" + (filter === null ? " active" : "");
-  allChip.textContent = "Alle";
-  allChip.onclick = () => {
-    filter = null;
-    paint();
-  };
-  box.appendChild(allChip);
+  const sel = document.createElement("select");
+  sel.className = "filter-select";
+  sel.setAttribute("aria-label", "Kanal filtern");
+
+  const optAll = document.createElement("option");
+  optAll.value = "";
+  optAll.textContent = "Alle Kanäle";
+  sel.appendChild(optAll);
 
   for (const c of state.channels) {
-    const chip = document.createElement("button");
-    chip.className = "chip filter" + (filter === c.id ? " active" : "");
-    chip.textContent = c.name;
-    chip.title = "Nur diesen Kanal anzeigen";
-    chip.onclick = () => {
-      filter = filter === c.id ? null : c.id;
-      paint();
-    };
-    box.appendChild(chip);
+    const o = document.createElement("option");
+    o.value = c.id;
+    o.textContent = c.name;
+    sel.appendChild(o);
   }
+
+  sel.value = filter || "";
+  sel.onchange = () => {
+    filter = sel.value || null;
+    paint();
+  };
+  box.appendChild(sel);
 }
 
 function paintManage() {
