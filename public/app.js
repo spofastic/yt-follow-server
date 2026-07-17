@@ -2,6 +2,9 @@
 
 const $ = (sel) => document.querySelector(sel);
 
+let state = { channels: [], videos: [], lastCheck: null };
+let filter = null; // aktive Kanal-ID zum Filtern der Videoliste, oder null = alle
+
 async function api(path, opts) {
   const res = await fetch(path, {
     headers: { "Content-Type": "application/json" },
@@ -27,57 +30,119 @@ function escapeHtml(s) {
   );
 }
 
-async function render() {
-  const { channels = [], videos = [], lastCheck } = await api("/api/state");
+// --- Kanal-Chips: dienen als FILTER (nicht zum Loeschen) ---
+function paintChannels() {
+  const box = $("#channels");
+  box.innerHTML = "";
+  $("#manageBtn").hidden = state.channels.length === 0;
 
-  const chBox = $("#channels");
-  chBox.innerHTML = "";
-  if (!channels.length) {
-    chBox.innerHTML =
+  if (!state.channels.length) {
+    box.innerHTML =
       '<p class="empty">Noch keine Kanäle. Oben eine Kanal-URL oder einen @handle eintragen.</p>';
-  } else {
-    for (const c of channels) {
-      const chip = document.createElement("span");
-      chip.className = "chip";
-      chip.innerHTML = `<span>${escapeHtml(c.name)}</span>`;
-      const rm = document.createElement("button");
-      rm.textContent = "×";
-      rm.title = "Nicht mehr folgen";
-      rm.onclick = async () => {
-        await api(`/api/channels/${encodeURIComponent(c.id)}`, { method: "DELETE" });
-        render();
-      };
-      chip.appendChild(rm);
-      chBox.appendChild(chip);
-    }
+    return;
   }
 
-  const vBox = $("#videos");
-  vBox.innerHTML = "";
-  if (!videos.length) {
-    if (channels.length) vBox.innerHTML = '<p class="empty">Noch keine Videos geladen.</p>';
-  } else {
-    for (const v of videos.slice(0, 80)) {
-      const a = document.createElement("a");
-      a.className = "video" + (v.seen ? "" : " unseen");
-      a.href = v.url;
-      a.target = "_blank";
-      a.rel = "noopener";
-      a.innerHTML = `
-        ${v.thumbnail ? `<img src="${v.thumbnail}" alt="" loading="lazy">` : '<img alt="">'}
-        <div class="info">
-          <div class="title">${escapeHtml(v.title)}</div>
-          <div class="sub">${escapeHtml(v.channelName)} &middot; ${timeAgo(v.published)}</div>
-        </div>`;
-      a.onclick = () =>
-        api("/api/seen", { method: "POST", body: JSON.stringify({ videoId: v.videoId }) });
-      vBox.appendChild(a);
-    }
+  const allChip = document.createElement("button");
+  allChip.className = "chip filter" + (filter === null ? " active" : "");
+  allChip.textContent = "Alle";
+  allChip.onclick = () => {
+    filter = null;
+    paint();
+  };
+  box.appendChild(allChip);
+
+  for (const c of state.channels) {
+    const chip = document.createElement("button");
+    chip.className = "chip filter" + (filter === c.id ? " active" : "");
+    chip.textContent = c.name;
+    chip.title = "Nur diesen Kanal anzeigen";
+    chip.onclick = () => {
+      filter = filter === c.id ? null : c.id;
+      paint();
+    };
+    box.appendChild(chip);
+  }
+}
+
+// --- Verwalten-Panel: Liste mit Muelleimer zum Loeschen ---
+function paintManage() {
+  const list = $("#manageList");
+  list.innerHTML = "";
+  if (!state.channels.length) {
+    list.innerHTML = '<p class="empty">Keine Kanäle.</p>';
+    return;
+  }
+  for (const c of state.channels) {
+    const row = document.createElement("div");
+    row.className = "manage-row";
+    const label = document.createElement("span");
+    label.textContent = c.name;
+    row.appendChild(label);
+
+    const del = document.createElement("button");
+    del.className = "trash";
+    del.title = "Kanal löschen";
+    del.setAttribute("aria-label", `${c.name} löschen`);
+    del.textContent = "🗑";
+    del.onclick = async () => {
+      if (!confirm(`„${c.name}" wirklich nicht mehr folgen?`)) return;
+      await api(`/api/channels/${encodeURIComponent(c.id)}`, { method: "DELETE" });
+      if (filter === c.id) filter = null;
+      await load();
+    };
+    row.appendChild(del);
+    list.appendChild(row);
+  }
+}
+
+function paintVideos() {
+  const box = $("#videos");
+  box.innerHTML = "";
+  let vids = state.videos;
+  if (filter) vids = vids.filter((v) => v.channelId === filter);
+
+  if (!vids.length) {
+    if (state.channels.length)
+      box.innerHTML = '<p class="empty">Keine Videos für diese Auswahl.</p>';
+    return;
   }
 
-  $("#meta").textContent = lastCheck
-    ? `Zuletzt aktualisiert: ${new Date(lastCheck).toLocaleString("de-DE")}`
+  for (const v of vids.slice(0, 80)) {
+    const a = document.createElement("a");
+    a.className = "video" + (v.seen ? "" : " unseen");
+    a.href = v.url;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.innerHTML = `
+      ${v.thumbnail ? `<img src="${v.thumbnail}" alt="" loading="lazy">` : '<img alt="">'}
+      <div class="info">
+        <div class="title">${escapeHtml(v.title)}</div>
+        <div class="sub">${escapeHtml(v.channelName)} &middot; ${timeAgo(v.published)}</div>
+      </div>`;
+    a.onclick = () =>
+      api("/api/seen", { method: "POST", body: JSON.stringify({ videoId: v.videoId }) });
+    box.appendChild(a);
+  }
+}
+
+function paint() {
+  paintChannels();
+  paintManage();
+  paintVideos();
+  $("#meta").textContent = state.lastCheck
+    ? `Zuletzt aktualisiert: ${new Date(state.lastCheck).toLocaleString("de-DE")}`
     : "";
+}
+
+async function load() {
+  const data = await api("/api/state");
+  state = {
+    channels: data.channels || [],
+    videos: data.videos || [],
+    lastCheck: data.lastCheck || null,
+  };
+  if (filter && !state.channels.some((c) => c.id === filter)) filter = null;
+  paint();
 }
 
 async function addChannel() {
@@ -92,7 +157,7 @@ async function addChannel() {
   if (res && res.ok) {
     inp.value = "";
     $("#status").textContent = `„${res.channel.name}" hinzugefügt.`;
-    render();
+    await load();
   } else {
     $("#status").textContent = (res && res.error) || "Kanal nicht gefunden.";
   }
@@ -103,21 +168,29 @@ $("#addInput").addEventListener("keydown", (e) => {
   if (e.key === "Enter") addChannel();
 });
 
+$("#manageBtn").onclick = () => {
+  const m = $("#manage");
+  m.hidden = !m.hidden;
+};
+$("#manageClose").onclick = () => {
+  $("#manage").hidden = true;
+};
+
 $("#refresh").onclick = async () => {
   $("#status").textContent = "Aktualisiere…";
   const res = await api("/api/refresh", { method: "POST" });
   $("#status").textContent = res && res.newCount ? `${res.newCount} neue Videos` : "Aktuell.";
-  render();
+  await load();
 };
 
 $("#markAll").onclick = async () => {
   await api("/api/seen", { method: "POST", body: JSON.stringify({}) });
-  render();
+  await load();
 };
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }
 
-render();
-setInterval(render, 60000); // Anzeige minuetlich auffrischen
+load();
+setInterval(load, 60000); // Anzeige minuetlich auffrischen

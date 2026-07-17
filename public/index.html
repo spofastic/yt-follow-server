@@ -29,7 +29,21 @@
 
     <p id="status" class="status"></p>
 
-    <section id="channels" class="channels"></section>
+    <section class="channelbar">
+      <div id="channels" class="channels"></div>
+      <button id="manageBtn" class="manage-toggle" title="Kanäle verwalten" hidden>
+        Verwalten
+      </button>
+    </section>
+
+    <section id="manage" class="manage" hidden>
+      <div class="manage-head">
+        <strong>Kanäle verwalten</strong>
+        <button id="manageClose">Fertig</button>
+      </div>
+      <div id="manageList" class="manage-list"></div>
+    </section>
+
     <section id="videos" class="videos"></section>
 
     <footer><span id="meta"></span></footer>

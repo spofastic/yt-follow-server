@@ -66,26 +66,66 @@ button:disabled { opacity: 0.6; cursor: default; }
 
 .status { color: var(--muted); font-size: 13px; margin: 6px 0; min-height: 18px; }
 
-.channels { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.channelbar {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.channels { flex: 1; display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 16px;
-  padding: 5px 10px;
+  padding: 5px 12px;
   font-size: 13px;
+  color: inherit;
 }
-.chip button {
+.chip.filter { cursor: pointer; }
+.chip.filter:hover { border-color: var(--accent); }
+.chip.filter.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.manage-toggle { white-space: nowrap; align-self: flex-start; }
+
+.manage {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  padding: 10px;
+  margin-bottom: 14px;
+}
+.manage-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.manage-list { display: flex; flex-direction: column; gap: 6px; }
+.manage-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+}
+.manage-row .trash {
   border: none;
   background: transparent;
-  color: var(--muted);
-  padding: 0 2px;
+  cursor: pointer;
   font-size: 16px;
   line-height: 1;
+  padding: 4px 8px;
+  border-radius: 6px;
 }
-.chip button:hover { color: var(--accent); }
+.manage-row .trash:hover { background: rgba(204, 0, 0, 0.14); }
 
 .videos { display: flex; flex-direction: column; gap: 10px; }
 .video {
