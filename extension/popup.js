@@ -135,10 +135,18 @@ function paintVideos() {
   }
 }
 
+function updateUnseen() {
+  const n = state.videos.filter((v) => !v.seen).length;
+  const badge = $("#unseenBadge");
+  badge.textContent = n > 99 ? "99+" : String(n);
+  badge.hidden = n === 0;
+}
+
 function paint() {
   paintChannels();
   paintManage();
   paintVideos();
+  updateUnseen();
   $("#meta").textContent = state.lastCheck
     ? `Zuletzt aktualisiert: ${new Date(state.lastCheck).toLocaleString("de-DE")}`
     : "";
@@ -153,6 +161,7 @@ async function load() {
     $("#manageList").innerHTML = "";
     $("#manage").hidden = true;
     $("#meta").textContent = "";
+    $("#unseenBadge").hidden = true;
     if (res && res.error === "no-server") {
       showNotice('Kein Server eingerichtet. <button>Einstellungen öffnen</button>');
     } else {
@@ -219,11 +228,19 @@ $("#manageClose").onclick = () => {
 $("#settings").onclick = () => chrome.runtime.openOptionsPage();
 
 $("#refresh").onclick = async () => {
+  const btn = $("#refresh");
+  btn.classList.add("spinning");
+  btn.disabled = true;
   $("#status").textContent = "Aktualisiere…";
-  const res = await send({ type: "refresh" });
-  if (res && res.ok) $("#status").textContent = res.newCount ? `${res.newCount} neue Videos` : "Aktuell.";
-  else $("#status").textContent = "Server nicht erreichbar.";
-  await load();
+  try {
+    const res = await send({ type: "refresh" });
+    if (res && res.ok) $("#status").textContent = res.newCount ? `${res.newCount} neue Videos` : "Aktuell.";
+    else $("#status").textContent = "Server nicht erreichbar.";
+    await load();
+  } finally {
+    btn.classList.remove("spinning");
+    btn.disabled = false;
+  }
 };
 
 $("#markAll").onclick = async () => {

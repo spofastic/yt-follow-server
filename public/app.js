@@ -124,10 +124,19 @@ function paintVideos() {
   }
 }
 
+function updateUnseen() {
+  const n = state.videos.filter((v) => !v.seen).length;
+  const badge = $("#unseenBadge");
+  badge.textContent = n > 99 ? "99+" : String(n);
+  badge.hidden = n === 0;
+  document.title = n > 0 ? `(${n}) YouTube Follow` : "YouTube Follow";
+}
+
 function paint() {
   paintChannels();
   paintManage();
   paintVideos();
+  updateUnseen();
   $("#meta").textContent = state.lastCheck
     ? `Zuletzt aktualisiert: ${new Date(state.lastCheck).toLocaleString("de-DE")}`
     : "";
@@ -190,10 +199,18 @@ $("#manageClose").onclick = () => {
 };
 
 $("#refresh").onclick = async () => {
+  const btn = $("#refresh");
+  btn.classList.add("spinning");
+  btn.disabled = true;
   $("#status").textContent = "Aktualisiere…";
-  const res = await api("/api/refresh", { method: "POST" });
-  $("#status").textContent = res && res.newCount ? `${res.newCount} neue Videos` : "Aktuell.";
-  await load();
+  try {
+    const res = await api("/api/refresh", { method: "POST" });
+    $("#status").textContent = res && res.newCount ? `${res.newCount} neue Videos` : "Aktuell.";
+    await load();
+  } finally {
+    btn.classList.remove("spinning");
+    btn.disabled = false;
+  }
 };
 
 $("#markAll").onclick = async () => {

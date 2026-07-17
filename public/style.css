@@ -52,6 +52,7 @@ button:hover { border-color: var(--accent); }
 button:disabled { opacity: 0.6; cursor: default; }
 
 button.icon {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -60,6 +61,28 @@ button.icon {
   padding: 0;
 }
 button.icon svg { width: 19px; height: 19px; display: block; }
+
+/* Ungesehen-Zaehler am "Alle gelesen"-Button */
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 17px;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* Dreh-Animation beim Aktualisieren */
+@keyframes spin { to { transform: rotate(360deg); } }
+button.icon.spinning svg { animation: spin 0.8s linear infinite; }
 
 /* Dialog "Kanal hinzufügen" */
 dialog {
@@ -112,7 +135,6 @@ button.ghost { background: transparent; }
   border-color: var(--accent);
   color: #fff;
 }
-.manage-toggle { white-space: nowrap; align-self: flex-start; }
 
 .manage {
   border: 1px solid var(--line);
