@@ -47,14 +47,34 @@ ghcr.io/<DEIN-NAME>/yt-follow-server:latest
 
 ## Teil B – Portainer-Stack auf der Synology
 
-### 1. Stack anlegen
-- Portainer → **Stacks** → **Add stack** → Name z. B. `yt-follow`.
-- Methode **Web editor** wählen und den Inhalt von [`stack.yml`](stack.yml) einfügen.
-- Darin **eine Zeile anpassen**:
-  ```yaml
-  image: ghcr.io/<DEIN-NAME>/yt-follow-server:latest
-  ```
-- **Deploy the stack** klicken.
+Es gibt zwei Wege. **Repository** ist bequemer (holt die Compose direkt aus GitHub,
+Updates per Klick); **Web editor** ist am schnellsten für den ersten Test.
+
+### Variablen (stack.env)
+Die [`stack.yml`](stack.yml) nutzt Variablen mit Defaults (`HOST_PORT`,
+`POLL_MINUTES`, `TZ`) – es läuft also auch **ohne** dass du etwas setzt. Zum
+Ändern dient [`stack.env`](stack.env):
+- **Web editor / Upload:** Werte einfach im Portainer-Formular („Environment
+  variables") setzen – Portainer erzeugt `stack.env` selbst.
+- **Repository:** Portainer schreibt nicht in dein Git; deshalb liegt `stack.env`
+  bereits im Repo. Werte dort ändern → committen → in Portainer neu deployen.
+
+### Weg 1 – Repository (empfohlen)
+- Portainer → **Stacks** → **Add stack** → Name `yt-follow`.
+- Build method: **Repository**.
+  - Repository URL: `https://github.com/spofastic/yt-follow-server`
+  - Repository reference: `refs/heads/main`
+  - Compose path: `stack.yml`
+  - (Privates Repo → **Authentication** an, GitHub-Name + PAT mit `repo`.)
+- **Deploy the stack**.
+
+### Weg 2 – Web editor (schnellster erster Test)
+- Portainer → **Stacks** → **Add stack** → Name `yt-follow`.
+- Methode **Web editor**, Inhalt von [`stack.yml`](stack.yml) einfügen.
+- **Deploy the stack**.
+
+> Der Image-Name in `stack.yml` ist bereits auf `ghcr.io/spofastic/yt-follow-server:latest`
+> gesetzt – nichts mehr anzupassen.
 
 ### 2. Aufrufen
 - Von der NAS/aus dem LAN:
