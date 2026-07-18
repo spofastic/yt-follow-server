@@ -1,0 +1,21 @@
+# Baut das Docker-Image und legt es in der GitLab-Container-Registry ab.
+# Ziel: registry.home.weichelt.de/mawe/yt-follow-server
+#
+# Laeuft auf dem Runner "landoc90-docker" (Docker-Executor mit Socket-Binding,
+# d. h. der Job spricht den Docker-Daemon des Hosts ueber /var/run/docker.sock an).
+# Deshalb ist kein docker:dind-Service noetig und der Layer-Cache bleibt erhalten.
+
+stages:
+  - build
+
+build-image:
+  stage: build
+  image: docker:27-cli
+  rules:
+    # Nur der Standard-Branch landet in der Registry.
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - docker build -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" -t "$CI_REGISTRY_IMAGE:latest" .
+    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+    - docker push "$CI_REGISTRY_IMAGE:latest"
