@@ -1,6 +1,11 @@
 # Portainer-Stack fuer die Synology NAS.
-# Nutzt das fertig gebaute Image aus der GitHub Container Registry (GHCR).
-# Image gehoert zum GitHub-Account "spofastic".
+# Nutzt das Image aus der EIGENEN GitLab-Container-Registry (gebaut vom lokalen
+# GitLab-Runner, siehe .gitlab-ci.yml). Kein Zugriff auf GitHub/GHCR noetig.
+# Die Registry hat ein gueltiges Let's-Encrypt-Zertifikat, daher ist auf der NAS
+# kein "insecure-registries"-Eintrag noetig.
+#
+# Fallback auf GHCR (falls GitLab mal nicht laeuft):
+#   image: ghcr.io/spofastic/yt-follow-server:latest
 #
 # Variablen (HOST_PORT, POLL_MINUTES, TZ) haben Defaults und funktionieren daher
 # auch ohne stack.env. Zum Aendern die Werte in stack.env setzen (liegt im Repo,
@@ -8,7 +13,7 @@
 
 services:
   yt-follow:
-    image: ghcr.io/spofastic/yt-follow-server:latest
+    image: registry.home.weichelt.de/mawe/yt-follow-server:latest
     container_name: yt-follow
     ports:
       - "${HOST_PORT:-8080}:8080"
