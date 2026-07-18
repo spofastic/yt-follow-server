@@ -1,11 +1,15 @@
 # Portainer-Stack fuer die Synology NAS.
-# Nutzt das Image aus der EIGENEN GitLab-Container-Registry (gebaut vom lokalen
-# GitLab-Runner, siehe .gitlab-ci.yml). Kein Zugriff auf GitHub/GHCR noetig.
-# Die Registry hat ein gueltiges Let's-Encrypt-Zertifikat, daher ist auf der NAS
-# kein "insecure-registries"-Eintrag noetig.
+# Nutzt das fertig gebaute Image aus der GitHub Container Registry (GHCR).
 #
-# Fallback auf GHCR (falls GitLab mal nicht laeuft):
-#   image: ghcr.io/spofastic/yt-follow-server:latest
+# WARUM NICHT die eigene GitLab-Registry?
+# Die NAS kann ihre eigenen macvlan-Container (GitLab .170, NPM .171) prinzip-
+# bedingt nicht erreichen ("no route to host") - macvlan isoliert den Host von
+# seinen eigenen macvlan-Interfaces. Der Docker-Daemon der NAS kommt daher nicht
+# an registry.home.weichelt.de. Von JEDEM ANDEREN Host im LAN funktioniert die
+# Registry dagegen problemlos.
+# Loesung waere, den Reverse Proxy auf einen anderen Host (z. B. DOC90) zu legen.
+#   Dann hier umstellen auf:
+#   image: registry.home.weichelt.de/mawe/yt-follow-server:latest
 #
 # Variablen (HOST_PORT, POLL_MINUTES, TZ) haben Defaults und funktionieren daher
 # auch ohne stack.env. Zum Aendern die Werte in stack.env setzen (liegt im Repo,
@@ -13,7 +17,7 @@
 
 services:
   yt-follow:
-    image: registry.home.weichelt.de/mawe/yt-follow-server:latest
+    image: ghcr.io/spofastic/yt-follow-server:latest
     container_name: yt-follow
     ports:
       - "${HOST_PORT:-8080}:8080"
